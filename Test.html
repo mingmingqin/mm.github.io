@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的Vue测试</title>
+</head>
+
+<body>
+<h1>这是我的Vue测试</h1>
+<p>在用 Vue.js 构建大型应用时推荐使用 NPM 安装， NPM 能很好地和诸如 Webpack 或 Browserify 模块打包器配合使用。 Vue.js 也提供配套工具来开发单文件组件。</p>
+<div id="app">
+
+<input v-model.trim="text" placeholder="输入内容" id="myipt"/>
+<p id="mycontent">{{text | capitalize}}</p>
+    <p>{{reversedMessage}}</p>
+
+    <textarea v-model="moreText" placeholder="多行文本"></textarea>
+    <p>{{moreText}}</p>
+
+    <p v-for="(data, index) in messages">{{ index + data.item }}</p>
+
+    <transition name="fade">
+    <p v-if="show">为真</p>
+    </transition>
+    <!--<p v-else>为否</p>-->
+
+    <button v-on:click="showOrHide">显示隐藏</button>
+
+    <ol>
+        <my-com v-for="item in todos" v-bind:todo="item"></my-com>
+    </ol>
+
+    <input type="checkbox" v-model="check">
+    <label>{{check}}</label>
+
+    <input type="checkbox" v-model="checkedNames" value="张三">
+    <label>张三</label>
+    <input type="checkbox" v-model="checkedNames" value="李四">
+    <label>李四</label>
+    <input type="checkbox" v-model="checkedNames" value="王五">
+    <label>王五</label>
+    <p>checked names: {{checkedNames}}</p>
+
+    <input type="radio" v-model="picked" value="男">
+    <label>男</label>
+    <input type="radio" v-model="picked" value="女">
+    <label>女</label>
+    <p>选了{{picked}}</p>
+
+    <select v-model="selected1"  style="width: 50px" id="a">
+        <option v-for="item in selects">{{item}}</option>
+    </select>
+    <select v-model="selected2" style="width: 50px" id="b">
+        <option v-for="item in select2s">{{item}}</option>
+    </select>
+
+    <p>国：{{selected1}}</p>
+    <p>国：{{selected2}}</p>
+    <p>国：{{selectedall}}</p>
+
+    <p>
+        <!-- 使用 router-link 组件来导航. -->
+        <!-- 通过传入 `to` 属性指定链接. -->
+        <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+        <router-link to="/foo">Go to Foo</router-link>
+        <router-link to="/bar">Go to Bar</router-link>
+    </p>
+
+    <!-- 路由出口 -->
+    <!-- 路由匹配到的组件将渲染在这里 -->
+    <router-view></router-view>
+
+</div>
+
+</body>
+
+</html>
+
+<script>
+  // 0. 如果使用模块化机制编程，導入Vue和VueRouter，要调用 Vue.use(VueRouter)
+
+  // 1. 定义（路由）组件。
+  // 可以从其他文件 import 进来
+  const Foo = { template: '<div>foo</div>' }
+  const Bar = { template: '<div>bar</div>' }
+
+  // 2. 定义路由
+  // 每个路由应该映射一个组件。 其中"component" 可以是
+  // 通过 Vue.extend() 创建的组件构造器，
+  // 或者，只是一个组件配置对象。
+  // 我们晚点再讨论嵌套路由。
+  const routes = [
+    { path: '/foo', component: Foo },
+    { path: '/bar', component: Bar }
+  ]
+
+  // 3. 创建 router 实例，然后传 `routes` 配置
+  // 你还可以传别的配置参数, 不过先这么简单着吧。
+  const router = new VueRouter({
+    routes // （缩写）相当于 routes: routes
+  })
+
+    Vue.component('my-com', {
+      props: ['todo'],
+      template: '<li>{{todo}}</li>'
+    })
+  new Vue({
+    el: '#app',
+    router,
+    data: {
+      messages: [{item: 'java'},{item: 'oc'},{item: 'swift'},],
+      text: '',
+      moreText: '',
+      date: new Date(),
+      show: false,
+      todos: ['看书','打球','唱歌'],
+      check: false,
+      checkedNames: [],
+      picked: '',
+      selects: ['中国', '美国', '法国'],
+      select2s: ['北京','深圳','上海'],
+      selected1: 'haha',
+      selected2: '',
+      //selectedall: ''
+    },
+    methods: {
+      showOrHide: function () {
+        this.show = !this.show;
+      }
+    },
+    filters: {
+      capitalize: function (value) {
+        if(!value) return ''
+        value = value.toString()
+        return value.toUpperCase()
+      }
+    },
+    watch:{
+      selected1:function( newV,oldV){
+//        this.selectedall.push(oldV)
+//        this.selectedall.push(newV)
+      }
+    },
+    computed: {
+      reversedMessage: function () {
+        return this.text.split('').reverse().join('')
+      },
+      selectedall: function () {
+        return this.selected1.concat(this.selected2)
+      }
+    }
+  })
+</script>
+
+<style>
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+        opacity: 0
+    }
+    .router-link-active {
+        color: red;
+    }
+</style>
+
